@@ -42,7 +42,7 @@ class Mycontroller extends Controller
             'students.*.mother_name' => 'required|string|max:255',
             'students.*.perma_address' => 'required|string|max:255',
 
-            
+
         ];
         // try {
         //     $validatedData = $request->validate($rules);
@@ -175,7 +175,6 @@ class Mycontroller extends Controller
             }
         }
         return redirect()->route('index')->with('success', 'Data for multiple students saved successfully!');
-        
     }
 
 
@@ -190,5 +189,10 @@ class Mycontroller extends Controller
         $user_find = User_Detail::find($id);
         $user_find->delete();
         return redirect()->route('index');
+    }
+
+    public function testing()
+    {
+        return view('This is testing route');
     }
 }
