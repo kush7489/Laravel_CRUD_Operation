@@ -12,8 +12,7 @@ class Mycontroller extends Controller
     //
     public function index()
     {
-        // $alldata = User_Detail::all();
-        $alldata = User_Detail::paginate(10);
+        $alldata = User_Detail::all();        
         return view('index', compact('alldata'));
     }
 
@@ -94,9 +93,8 @@ class Mycontroller extends Controller
 
     public function update_page()
     {
-        // $alldata = user_Detail::all();
-        $alldata = user_Detail::paginate(10);
-        return view('store1', compact('alldata'));
+        $alldata = user_Detail::all();                
+        return view('store', compact('alldata'));
     }
 
     public function update_data(Request $request)
