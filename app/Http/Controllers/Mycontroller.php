@@ -13,6 +13,7 @@ class Mycontroller extends Controller
     public function index()
     {
         // $alldata = User_Detail::all();
+        // adding pagination in blade template file
         $alldata = User_Detail::paginate(10);
         return view('index', compact('alldata'));
     }
