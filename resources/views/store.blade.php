@@ -76,11 +76,7 @@
     <div class="header">
 
         <a href="{{ route('index') }}"><button class="add-btn" id="">Back</button></a>
-        <form action="{{ route('delete_data') }}" method="POST">
-            @csrf
-            @method('DELETE')
-            <button type="submit" class="add-btn" id="">Delete All</button>
-        </form>
+        <a href="{{ route('update_page') }}"><button class="add-btn" id="">Delete All</button></a>
 
     </div>
     <form action="{{ route('update_data') }}" method="POST" enctype="multipart/form-data"
@@ -293,13 +289,10 @@
 
             </tbody>
         </table>
-        <div>
-            <center> {{ $alldata->links() }}</center>
-        </div>
         <button type="submit" class="add-btn" id="">Update All</button>
     </form>
 
-    <script>
+    {{-- <script>
         console.log('Hello This is store file');
         let changedData = []; // Initialize it with an empty object, or any relevant data.
 
@@ -309,7 +302,7 @@
         document.getElementById('myTable1').addEventListener('change', function(event) {
             if (event.target && event.target.name.includes('start_date')) {
                 const startDate = event.target;
-                // const startDate = start_date;
+                const startDate = start_date;
                 const endDate = startDate.closest('tr').querySelector('[name*="end_date"]');
                 endDate.setAttribute('min', startDate.value); // Set min end date to start date
             }
@@ -317,17 +310,11 @@
             // Handle end date change
             if (event.target && event.target.name.includes('end_date')) {
                 const endDate = event.target;
-                // const endDate = end_date;
-                let startdate = new Date(startDate);
-                let enddate = new Date(endDate);
-                if (startdate > enddate) {
-                    alert('This not possible ')
-                } else {
-                    const startDate = endDate.closest('tr').querySelector('[name*="start_date"]');
+                const endDate = end_date;
+                const startDate = endDate.closest('tr').querySelector('[name*="start_date"]');
 
-                    // Set the maximum value of start date to be the selected end date
-                    startDate.setAttribute('max', endDate.value);
-                }
+                // Set the maximum value of start date to be the selected end date
+                startDate.setAttribute('max', endDate.value);
             }
         });
 
@@ -379,7 +366,76 @@
             // Now submit the form manually
             event.target.submit();
         }
+    </script> --}}
+    <script>
+        let changedData = []; // Initialize an empty array to track changes.
+
+        // This function will track changes in form fields.
+        function trackChange(index, field, value) {
+            // Find the record in changedData for the given index.
+            let record = changedData.find(item => item.index === index);
+
+            if (!record) {
+                record = {
+                    index: index
+                };
+                changedData.push(record);
+            }
+
+            // Update the record with the new field and value.
+            record[field] = value;
+
+            console.log(changedData); // You can log or process the changed data.
+        }
+
+        // This function handles form submission manually.
+        function handleSubmit(event) {
+            event.preventDefault(); // Prevent the default form submission.
+
+            // Before submitting, we need to append hidden input fields for all changed data.
+            changedData.forEach(record => {
+                for (let field in record) {
+                    if (field !== 'index') { // We don't need to send the index in the form data.
+                        // Create hidden input fields for each change.
+                        let input = document.createElement('input');
+                        input.type = 'hidden';
+                        input.name =
+                        `changedData[${record.index}][${field}]`; // Setting the name in the right format.
+                        input.value = record[field]; // Set the value to the changed value.
+
+                        // Append the input field to the form.
+                        document.forms[0].appendChild(input);
+                    }
+                }
+            });
+
+            // Now submit the form manually.
+            event.target.submit(); // This will submit the form with the hidden inputs.
+        }
+
+        // Handle changes for start date and end date.
+        document.getElementById('myTable1').addEventListener('change', function(event) {
+            if (event.target && event.target.name.includes('start_date')) {
+                const startDate = event.target;
+                const endDate = startDate.closest('tr').querySelector('[name*="end_date"]');
+                endDate.setAttribute('min', startDate.value); // Set min end date to start date.
+            }
+
+            if (event.target && event.target.name.includes('end_date')) {
+                const endDate = event.target;
+                const startDate = endDate.closest('tr').querySelector('[name*="start_date"]');
+                const startDateValue = new Date(startDate.value);
+                const endDateValue = new Date(endDate.value);
+
+                if (startDateValue > endDateValue) {
+                    alert('End date cannot be before start date.');
+                } else {
+                    startDate.setAttribute('max', endDate.value); // Set max start date to end date.
+                }
+            }
+        });
     </script>
+
 </body>
 
 </html>

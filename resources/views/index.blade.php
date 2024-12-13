@@ -309,9 +309,7 @@
             </tbody>
         </table>
 
-        <div>
-            <center> {{ $alldata->links() }}</center>
-        </div>
+        
     </form>
 
 
