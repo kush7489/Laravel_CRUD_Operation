@@ -2,9 +2,6 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Mycontroller;
-// Route::get('/', function () {
-//     return view('welcome');
-// });
 
 Route::get('/',[Mycontroller::class,'index'])->name('index');
 Route::post('/send',[Mycontroller::class,'send'])->name('send');
