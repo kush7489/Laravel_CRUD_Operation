@@ -27,9 +27,6 @@ class Mycontroller extends Controller
             'students.*.name' => 'required|string|max:255',
             'students.*.start_date' => 'required|date',
             'students.*.end_date' => 'required|date|after_or_equal:students.*.start_date',
-            /*
-            [{"name":"Eight","start_date":"2024-12-18","end_date":"2024-12-25","department":"Civil","Course":"MCA","rollno":"2323","email":"kushlen@gmail.com","contactno":"43433","enrollmentno":"4334","branch":"Computer","category":"OBC","batch":"4343","address":"fsdf","collage_name":"fsd","father_name":"fsdf","mother_name":"fsd","perma_address":"fds","attachement":{"Illuminate\\Http\\UploadedFile":"C:\\xampp\\tmp\\php9CCD.tmp"}}]
-            */
             'students.*.attachement' => 'nullable|file|mimes:jpg,png,pdf|max:2048',
             'students.*.department' => 'required|string',
             'students.*.Course' => 'required|string',
@@ -46,7 +43,7 @@ class Mycontroller extends Controller
             'students.*.mother_name' => 'required|string|max:255',
             'students.*.perma_address' => 'required|string|max:255',
 
-            // Add other validation rules as needed
+
         ];
         // try {
         //     $validatedData = $request->validate($rules);
@@ -179,8 +176,6 @@ class Mycontroller extends Controller
             }
         }
         return redirect()->route('index')->with('success', 'Data for multiple students saved successfully!');
-        // $alldata = User_Detail::all();
-        // return view('index', compact('alldata'));
     }
 
 
@@ -195,5 +190,11 @@ class Mycontroller extends Controller
         $user_find = User_Detail::find($id);
         $user_find->delete();
         return redirect()->route('index');
+    }
+
+    public function testing()
+    {
+        return view('This is testing route');
+        // adding testing 
     }
 }
