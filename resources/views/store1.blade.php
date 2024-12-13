@@ -293,6 +293,9 @@
 
             </tbody>
         </table>
+        <div>
+            <center> {{ $alldata->links() }}</center>
+        </div>
         <button type="submit" class="add-btn" id="">Update All</button>
     </form>
 
