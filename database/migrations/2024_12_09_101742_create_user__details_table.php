@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('name');
             $table->date('start_date')->nullable();
             $table->date('end_date')->nullable();
-            $table->string('attachment')->nullable();
+            $table->longText('attachment')->nullable();
             $table->string('department')->nullable();
             $table->string('course')->nullable();
             $table->string('rollno')->nullable();

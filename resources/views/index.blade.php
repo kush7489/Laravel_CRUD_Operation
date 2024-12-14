@@ -119,9 +119,29 @@
                         <td> {{ $user->end_date }} </td>
 
                         <td>
+                            @if (!empty($user->imagePaths))
+                                @foreach ($user->imagePaths as $index => $imagePath)
+                                    {{-- <img src="{{ Storage::url($imagePath) }}" alt="Uploaded Image" class="img-fluid" /> --}}
 
-                            <p> <a href="{{ asset('uploads/' . $user->attachment) }}" style="text-decoration: none">
-                                    {{ basename($user->attachment) }} </a></p>
+                                    {{ basename($imagePath) }}
+                                    <a href="{{ asset('storage/' . $imagePath) }}" style="text-decoration: none">View
+                                    </a>
+
+                                    <!-- Delete Button -->
+                                    {{-- <form 
+                                        action="{{ route('images.delete', ['id' => $user->id, 'imageIndex' => $index]) }}"
+                                        method="POST" style="display:inline;">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit"
+                                            onclick="return confirm('Are you sure you want to delete this image?')">Delete</button>
+                                    </form> --}}
+                                    <a href="{{ route('images.delete', ['id' => $user->id, 'imageIndex' => $index]) }}">Delete</a>
+                                @endforeach
+                            @else
+                                <p>No images available for this user.</p>
+                            @endif
+
                             {{-- <p>
 
                                 <label for="attachement" required></label>
@@ -196,8 +216,8 @@
                     {{-- attachment --}}
                     <td>
                         <label for="attachement" required></label>
-                        <input type="file" id="attachement" name="students[0][attachement]"
-                            placeholder="Upload document">
+                        <input type="file" id="attachement" name="students[0][attachement][]"
+                            placeholder="Upload document" multiple>
                     </td>
 
 
@@ -309,7 +329,7 @@
             </tbody>
         </table>
 
-        
+
     </form>
 
 

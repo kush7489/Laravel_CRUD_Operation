@@ -6,13 +6,20 @@ use App\Http\Controllers\Controller;
 use App\Models\User_Detail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 
 class Mycontroller extends Controller
 {
     //
     public function index()
     {
-        $alldata = User_Detail::all();        
+        // $userDetails = User_Detail::all();
+        $alldata = User_Detail::all();
+        // Unserialize the attachment field for each record
+        foreach ($alldata as $userDetail) {
+            // Unserialize the image paths stored in the attachment field
+            $userDetail->imagePaths = unserialize($userDetail->attachment);
+        }
         return view('index', compact('alldata'));
     }
 
@@ -25,7 +32,8 @@ class Mycontroller extends Controller
             'students.*.name' => 'required|string|max:255',
             'students.*.start_date' => 'required|date',
             'students.*.end_date' => 'required|date|after_or_equal:students.*.start_date',
-            'students.*.attachement' => 'nullable|file|mimes:jpg,png,pdf|max:2048',
+            'students.*.attachement' => 'required|array',
+            'students.*.attachement.*' => 'nullable|image|file|mimes:jpg,png,pdf|max:2048',
             'students.*.department' => 'required|string',
             'students.*.Course' => 'required|string',
             'students.*.rollno' => 'required|string|max:50',
@@ -49,9 +57,11 @@ class Mycontroller extends Controller
         //     Log::error('Validation Errors:', $e->validator->errors()->toArray());
         //     return redirect()->back()->withErrors($e->validator)->withInput();
         // }
+
+
         // Validate the request data
         $validatedData = $request->validate($rules);
-        // Log::info('Validated Data two:', $validatedData);
+        Log::info('Validated Data data with multiple images:', $validatedData);
 
         // Process each student's data
         foreach ($validatedData['students'] as $student) {
@@ -61,13 +71,34 @@ class Mycontroller extends Controller
             $userDetail->start_date = $student['start_date'];
             $userDetail->end_date = $student['end_date'];
 
-            // Handle file upload
-            if ($request->hasFile('students.*.attachement')) {
-                $file = $student['attachement'];
-                $filename = time() . '_' . $file->getClientOriginalName();
-                $file->move(public_path('uploads'), $filename);
-                $userDetail->attachment = $filename;
+
+            // Initialize an empty array to store image paths
+            $imageNames = [];
+
+            // Loop through each file uploaded for 'attachement' (which is an array of files for each student)
+            foreach ($student['attachement'] as $image) {
+                // Check if the $image is an instance of UploadedFile (to ensure it's a valid file)
+                if ($image instanceof \Illuminate\Http\UploadedFile) {
+                    // Store the image in the 'images' folder (within public storage)
+                    $imagePath = $image->store('images', 'public');  // Store image and get path
+
+                    // Add the image path/name to the array
+                    $imageNames[] = $imagePath;  // You can store just the path or filename
+                }
             }
+
+            // Store the serialized array of images in the database if there are any images
+            if (!empty($imageNames)) {
+                $userDetail->attachment = serialize($imageNames);  // Serialize the array of images' paths
+            }
+
+            // Handle file upload
+            // if ($request->hasFile('students.*.attachement')) {
+            //     $file = $student['attachement'];
+            //     $filename = time() . '_' . $file->getClientOriginalName();
+            //     $file->move(public_path('uploads'), $filename);
+            //     $userDetail->attachment = $filename;
+            // }
 
             $userDetail->department = $student['department'];
             $userDetail->course = $student['Course'];
@@ -93,7 +124,7 @@ class Mycontroller extends Controller
 
     public function update_page()
     {
-        $alldata = user_Detail::all();                
+        $alldata = user_Detail::all();
         return view('store', compact('alldata'));
     }
 
@@ -189,9 +220,34 @@ class Mycontroller extends Controller
         return redirect()->route('index');
     }
 
-    public function testing()
+    public function images_delete($id, $imageIndex)
     {
-        return view('This is testing route');
-        // adding testing 
+        // Find the image record from the database
+        $image = User_Detail::findOrFail($id);
+
+        // Unserialize the image data to get the list of image paths
+        $imagePaths = unserialize($image->attachment);
+
+        // Check if the image index exists
+        if (isset($imagePaths[$imageIndex])) {
+            // Get the image path (relative path from storage)
+            $imagePath = $imagePaths[$imageIndex];
+
+            // Delete the image file from storage
+            if (Storage::disk('public')->exists($imagePath)) {
+                Storage::disk('public')->delete($imagePath);
+            }
+
+            // Remove the image path from the array
+            unset($imagePaths[$imageIndex]);
+
+            // Re-serialize the image paths array and update the record
+            $image->attachment = serialize(array_values($imagePaths));  // Reindex the array
+            $image->save();
+        }
+
+        // Redirect back with a success message
+        // return redirect()->route('index')->with('success', 'Image deleted successfully.');
+        return redirect()->route('index')->with('success','Image deleted successfully!!');
     }
 }
