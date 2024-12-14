@@ -122,9 +122,14 @@ class Mycontroller extends Controller
         return redirect()->route('index')->with('success', 'Data for multiple students saved successfully!');
     }
 
-    public function update_page()
+    public function edit_page()
     {
-        $alldata = user_Detail::all();
+        $alldata = User_Detail::all();
+        // Unserialize the attachment field for each record
+        foreach ($alldata as $userDetail) {
+            // Unserialize the image paths stored in the attachment field
+            $userDetail->imagePaths = unserialize($userDetail->attachment);
+        }
         return view('store', compact('alldata'));
     }
 
@@ -248,6 +253,43 @@ class Mycontroller extends Controller
 
         // Redirect back with a success message
         // return redirect()->route('index')->with('success', 'Image deleted successfully.');
-        return redirect()->route('index')->with('success','Image deleted successfully!!');
+        return redirect()->route('index')->with('success', 'Image deleted successfully!!');
+    }
+
+    public function upload_new_image(Request $request)
+    {
+        // Get the user ID
+        $userId = $request->input('user_id');
+
+        // Get the uploaded files
+        $files = $request->file('attachement');
+        if ($files) {
+            // Loop through each file
+            foreach ($files as $file) {
+                // Store the file in the storage folder (local disk or cloud storage)
+                // The 'public' disk stores files in the 'storage/app/public' folder
+                $path = $file->store('uploads', 'public'); // Store the file
+    
+                // Save the file path in the database
+                User_Detail::create([
+                    'id' => $userId,   // Associate with the user
+                    'attachment' => $path,        // Store the file path
+                ]);
+            }
+    
+            return response()->json([
+                'success' => true,
+                'message' => 'Files uploaded successfully.'
+            ]);
+            return response()->json([
+                'success' => false,
+                'message' => 'No files uploaded.'
+            ]);
+        }
+    
+        $studentIndex = $request->all();
+        Log::info("Student Index is : ", $studentIndex);
+        return response()->json(['message' => 'files selected for upload.'], 200);
+        // return "Upload new Images";
     }
 }

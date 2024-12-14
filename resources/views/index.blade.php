@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Welcom in SIMS</title>
     <style>
         body {
@@ -63,6 +64,7 @@
             background-color: #007bff;
         }
     </style>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 
 <body>
@@ -72,7 +74,7 @@
 
     <div class="header">
         <button class="add-btn" id="duplicateRowBtn" onclick="showElement()">Add +</button>
-        <a href="{{ route('update_page') }}"><button class="add-btn" id="">Update</button></a>
+        <a href="{{ route('edit_page') }}"><button class="add-btn" id="">Edit</button></a>
     </div>
 
     <form action="{{ route('send') }}" method="POST" enctype="multipart/form-data">
@@ -123,33 +125,38 @@
                                 @foreach ($user->imagePaths as $index => $imagePath)
                                     {{-- <img src="{{ Storage::url($imagePath) }}" alt="Uploaded Image" class="img-fluid" /> --}}
 
-                                    {{ basename($imagePath) }}
-                                    <a href="{{ asset('storage/' . $imagePath) }}" style="text-decoration: none">View
-                                    </a>
+                                    <div>{{ $index + 1 }}.
+                                        {{ Str::limit(basename($imagePath), 10) }}
+                                        {{-- {{ basename($imagePath) }} --}}
+                                        <a href="{{ asset('storage/' . $imagePath) }}"
+                                            style="text-decoration: none">View
+                                        </a>
 
-                                    <!-- Delete Button -->
-                                    {{-- <form 
-                                        action="{{ route('images.delete', ['id' => $user->id, 'imageIndex' => $index]) }}"
-                                        method="POST" style="display:inline;">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit"
-                                            onclick="return confirm('Are you sure you want to delete this image?')">Delete</button>
-                                    </form> --}}
-                                    <a href="{{ route('images.delete', ['id' => $user->id, 'imageIndex' => $index]) }}">Delete</a>
+                                        <a href="{{ route('images.delete', ['id' => $user->id, 'imageIndex' => $index]) }}"
+                                            style="text-decoration: none">Delete
+                                        </a>
+                                    </div>
+                                    <br>
+
+                                    <label for="attachement" required></label>
+                                    <input type="file" id="attachement" name="students[0][attachement][]"
+                                        placeholder="Upload document" multiple>
+
+                                    </div>
                                 @endforeach
-                            @else
-                                <p>No images available for this user.</p>
                             @endif
-
-                            {{-- <p>
-
-                                <label for="attachement" required></label>
-                                <input type="file" id="attachement" name=" attachement"
-                                    placeholder="Upload document">
-                            </p> --}}
+                            @if (empty($user->imagePaths))
+                                <p>No attachment available for this user.</p>
 
 
+                                <!-- Add hidden input for the user ID -->
+                                <input type="hidden" class="user-id" value="{{ $user->id }}">
+                                <input type="file" class="attachement"
+                                    name="students[{{ $index }}][attachement][]" multiple>
+                                <button type="button" class="uploadBtn"
+                                    data-index="{{ $index }}">Upload</button>
+                                <span id="stu_id" value="{{ $user->id }}"></span>
+                            @endif
 
                         </td>
 
@@ -181,7 +188,7 @@
                         </td>
 
 
-                        <td> "{{ $user->batch }} </td>
+                        <td> {{ $user->batch }} </td>
 
 
                         <td> {{ $user->address }} </td>
@@ -325,15 +332,9 @@
 
                 </tr>
                 <button type="submit" style="color: #4CAF50">Save</button>
-
             </tbody>
         </table>
-
-
     </form>
-
-
-
 
 
     <script>
@@ -413,6 +414,60 @@
             // Remove the row from the table
             row.remove();
         }
+
+        $(document).ready(function() {
+            // Handle the file upload button click event
+            $('.uploadBtn').click(function() {
+                var index = $(this).data('index'); // Get the index of the student from data-index
+                var inputFile = $('input[name="students[' + index + '][attachement][]"]')[
+                    0]; // Get the file input by index
+
+                // Retrieve the user ID from the hidden input in the same row
+                var userId = $(this).closest('td').find('.user-id').val();
+
+                // If no files are selected, show an alert
+                if (inputFile.files.length === 0) {
+                    alert('Please select a file to upload.');
+                    return;
+                }
+
+                var formData = new FormData(); // Create a new FormData object
+
+                // Append the selected files to FormData
+                $.each(inputFile.files, function(i, file) {
+                    formData.append('attachement[]', file);
+                });
+                
+                // Append the user ID to FormData
+                formData.append('user_id', userId); // This is the key where we store the user ID
+
+                // console.log("Form data is : ", formData);
+
+
+                // Get the CSRF token from the meta tag
+                var csrfToken = $('meta[name="csrf-token"]').attr('content');
+
+                // Send the data via AJAX
+                $.ajax({
+                    url: '{{ route('upload_new_image') }}', // Your Laravel route for handling the upload
+                    type: 'POST',
+                    data: formData,
+                    processData: false, // Don't let jQuery process the data
+                    contentType: false, // Don't set content-type for multipart/form-data
+                    headers: {
+                        'X-CSRF-TOKEN': csrfToken // Include CSRF token in the request headers
+                    },
+                    success: function(response) {
+                        alert('Files uploaded successfully');
+                        console.log(response); // Optionally, log the response for debugging
+                    },
+                    error: function(xhr, status, error) {
+                        alert('There was an error uploading the file.');
+                        console.error(error);
+                    }
+                });
+            });
+        });
     </script>
 
 

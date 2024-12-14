@@ -76,7 +76,7 @@
     <div class="header">
 
         <a href="{{ route('index') }}"><button class="add-btn" id="">Back</button></a>
-        <a href="{{ route('update_page') }}"><button class="add-btn" id="">Delete All</button></a>
+        <a href="{{ route('delete_data') }}"><button class="add-btn" id="">Delete All</button></a>
 
     </div>
     <form action="{{ route('update_data') }}" method="POST" enctype="multipart/form-data"
@@ -133,8 +133,7 @@
                             {{-- <td><a href="{{ asset('uploads/' . $user->attachment) }}">View Attachment</a></td> --}}
 
                         <td>
-
-                            <p> <a href="{{ asset('uploads/' . $user->attachment) }}" style="text-decoration: none">
+                            {{-- <p> <a href="{{ asset('uploads/' . $user->attachment) }}" style="text-decoration: none">
                                     {{ basename($user->attachment) }} </a></p>
                             <p>
 
@@ -142,10 +141,32 @@
                                 <input type="file" id="attachement"
                                     name="students[{{ $index }}][attachement]" placeholder="Upload document"
                                     onchange="trackChange({{ $user->id }}, 'attachment', this.value)">
-                            </p>
+                            </p> --}}
+                            @if (!empty($user->imagePaths))
+                                @foreach ($user->imagePaths as $index => $imagePath)
+                                    {{-- <img src="{{ Storage::url($imagePath) }}" alt="Uploaded Image" class="img-fluid" /> --}}
 
+                                    {{ basename($imagePath) }}
+                                    <a href="{{ asset('storage/' . $imagePath) }}" style="text-decoration: none">View
+                                    </a>
 
-
+                                    <!-- Delete Button -->
+                                    {{-- <form 
+                                        action="{{ route('images.delete', ['id' => $user->id, 'imageIndex' => $index]) }}"
+                                        method="POST" style="display:inline;">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit"
+                                            onclick="return confirm('Are you sure you want to delete this image?')">Delete</button>
+                                    </form> --}}
+                                @endforeach
+                            @endif
+                            @if (empty($user->imagePaths))
+                                <p>No images available for this user.</p>
+                                {{-- <label for="attachement" required></label>
+                                <input type="file" id="attachement" name="images[]" placeholder="Upload document"
+                                    multiple> --}}
+                            @endif
                         </td>
 
 
@@ -400,7 +421,7 @@
                         let input = document.createElement('input');
                         input.type = 'hidden';
                         input.name =
-                        `changedData[${record.index}][${field}]`; // Setting the name in the right format.
+                            `changedData[${record.index}][${field}]`; // Setting the name in the right format.
                         input.value = record[field]; // Set the value to the changed value.
 
                         // Append the input field to the form.
