@@ -137,25 +137,29 @@
                                         </a>
                                     </div>
                                     <br>
-
-                                    <label for="attachement" required></label>
-                                    <input type="file" id="attachement" name="students[0][attachement][]"
-                                        placeholder="Upload document" multiple>
-
                                     </div>
                                 @endforeach
+                                <div style="display: flex">
+                                    <input type="hidden" class="user-id" value="{{ $user->id }}">
+                                    <input type="file" class="attachement"
+                                        name="students[{{ $index }}][attachement][]" multiple>
+                                    <button type="button" class="uploadBtn"
+                                        data-index="{{ $index }}">Upload</button>
+                                    <span id="stu_id" value="{{ $user->id }}"></span>
+                                </div>
                             @endif
                             @if (empty($user->imagePaths))
                                 <p>No attachment available for this user.</p>
 
-
-                                <!-- Add hidden input for the user ID -->
-                                <input type="hidden" class="user-id" value="{{ $user->id }}">
-                                <input type="file" class="attachement"
-                                    name="students[{{ $index }}][attachement][]" multiple>
-                                <button type="button" class="uploadBtn"
-                                    data-index="{{ $index }}">Upload</button>
-                                <span id="stu_id" value="{{ $user->id }}"></span>
+                                <div style="display: flex">
+                                    <!-- Add hidden input for the user ID -->
+                                    <input type="hidden" class="user-id" value="{{ $user->id }}">
+                                    <input type="file" class="attachement"
+                                        name="students[{{ $index }}][attachement][]" multiple>
+                                    <button type="button" class="uploadBtn"
+                                        data-index="{{ $index }}">Upload</button>
+                                    <span id="stu_id" value="{{ $user->id }}"></span>
+                                </div>
                             @endif
 
                         </td>
@@ -437,7 +441,7 @@
                 $.each(inputFile.files, function(i, file) {
                     formData.append('attachement[]', file);
                 });
-                
+
                 // Append the user ID to FormData
                 formData.append('user_id', userId); // This is the key where we store the user ID
 
