@@ -434,34 +434,83 @@
             event.target.submit(); // This will submit the form with the hidden inputs.
         }
 
-        // Handle changes for start date and end date.
+       
 
-        let previousEndDate = {}; // Store previous end dates for each row
-        document.getElementById('myTable1').addEventListener('change', function(event) {
-            if (event.target && event.target.name.includes('start_date')) {
-                const startDate = event.target;
-                const endDate = startDate.closest('tr').querySelector('[name*="end_date"]');
-                endDate.setAttribute('min', startDate.value); // Set min end date to start date.
+        let firstClickedDate = {}; 
+
+        document.getElementById('myTable1').addEventListener('focus', function(event) {
+            if (event.target && event.target.name.includes('end_date')) {
+                // Get the row index to uniquely identify each row
+                const rowIndex = event.target.closest('tr').rowIndex;
+                const endDate = event.target;
+
+                // Store the first clicked end date if not already stored
+                if (!firstClickedDate[rowIndex]) {
+                    firstClickedDate[rowIndex] = endDate.value; // Save the initial date
+                }
             }
+        }, true); // Use 'focus' event to capture when the user clicks on the input
 
+        let start_firstClickedDate = {};
+        document.getElementById('myTable1').addEventListener('focus', function(event) {
+            if (event.target && event.target.name.includes('start_date')) {
+                // Get the row index to uniquely identify each row
+                const rowIndex = event.target.closest('tr').rowIndex;
+                const startDate = event.target;
+
+                // Store the first clicked start date if not already stored
+                if (!start_firstClickedDate[rowIndex]) {
+                    start_firstClickedDate[rowIndex] = startDate.value; // Save the initial date
+                }
+            }
+        }, true); // Use 'focus' event to capture when the user clicks on the input
+
+
+
+        document.getElementById('myTable1').addEventListener('change', function(event) {
             if (event.target && event.target.name.includes('end_date')) {
                 const endDate = event.target;
                 const startDate = endDate.closest('tr').querySelector('[name*="start_date"]');
+
+                // Get the row index to uniquely identify each row
+                const rowIndex = endDate.closest('tr').rowIndex;
+
                 const startDateValue = new Date(startDate.value);
                 const endDateValue = new Date(endDate.value);
 
-                const rowIndex = endDate.closest('tr').rowIndex; // Get the row index
-                if (!previousEndDate[rowIndex]) {
-                    previousEndDate[rowIndex] = endDate.value; // Store the first time the end date is set
-                }
+                // If the user selects an end date before the start date
                 if (startDateValue > endDateValue) {
                     alert('End date cannot be before start date.');
-                    endDate.value = previousEndDate[rowIndex]; // Revert to the previous end date value
 
+                    // Reset to the initial (first) selected end date
+                    endDate.value = firstClickedDate[rowIndex]; // Set it back to the first clicked date
                 } else {
-                    // If the end date is valid, update the stored previous end date
-                    previousEndDate[rowIndex] = endDate.value; // Update the stored value
+                    // If the date is valid, update the initial clicked date with the new date
+                    firstClickedDate[rowIndex] = endDate.value; // Update the first clicked date
                     startDate.setAttribute('max', endDate.value); // Set max start date to end date
+                }
+            }
+
+            if (event.target && event.target.name.includes('start_date')) {
+                const startDate = event.target;
+                const endDate = startDate.closest('tr').querySelector('[name*="end_date"]');
+
+                // Get the row index to uniquely identify each row
+                const rowIndex = startDate.closest('tr').rowIndex;
+
+                const startDateValue = new Date(startDate.value);
+                const endDateValue = new Date(endDate.value);
+
+                // If the user selects an end date before the start date
+                if (startDateValue > endDateValue) {
+                    alert('start date cannot be after end date.');
+
+                    // Reset to the initial (first) selected end date
+                    startDate.value = start_firstClickedDate[rowIndex]; // Set it back to the first clicked date
+                } else {
+                    // If the date is valid, update the initial clicked date with the new date
+                    start_firstClickedDate[rowIndex] = startDate.value; // Update the first clicked date
+                    // startDate.setAttribute('max', endDate.value); // Set max start date to end date
                 }
             }
         });
