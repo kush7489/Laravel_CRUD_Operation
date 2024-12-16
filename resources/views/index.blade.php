@@ -463,7 +463,8 @@
                     },
                     success: function(response) {
                         alert('Files uploaded successfully');
-                        console.log(response); // Optionally, log the response for debugging
+                        // console.log(response); // Optionally, log the response for debugging
+                        window.location.reload();  // Reloads the current page
                     },
                     error: function(xhr, status, error) {
                         alert('There was an error uploading the file.');

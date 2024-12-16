@@ -284,7 +284,7 @@
                             <label for="collage_name"></label>
                             <input type="text" id="collage_name" value="{{ $user->college_name }}"
                                 name="students[{{ $index }}][collage_name]"
-                                onchange="trackChange({{ $user->id }}, 'collage_name', this.value)"</td>
+                                onchange="trackChange({{ $user->id }}, 'college_name', this.value)"</td>
 
 
                         <td><label for="father_name"></label>
@@ -303,7 +303,7 @@
                         <td> <label for="perma_address"></label>
                             <input type="text" id="perma_address"value="{{ $user->permanent_address }}"
                                 name="students[{{ $index }}][perma_address]"
-                                onchange="trackChange({{ $user->id }}, 'perma_address', this.value)"</td>
+                                onchange="trackChange({{ $user->id }}, 'permanent_address', this.value)"</td>
                     </tr>
                 @endforeach
 
