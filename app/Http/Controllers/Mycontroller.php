@@ -18,7 +18,8 @@ class Mycontroller extends Controller
         // Unserialize the attachment field for each record
         foreach ($alldata as $userDetail) {
             // Unserialize the image paths stored in the attachment field
-            $userDetail->imagePaths = unserialize($userDetail->attachment);
+            // $user->imagePaths = array_values(unserialize($user->attachment));
+            $userDetail->imagePaths = array_values(unserialize($userDetail->attachment));
         }
         return view('index', compact('alldata'));
     }
@@ -260,36 +261,61 @@ class Mycontroller extends Controller
     {
         // Get the user ID
         $userId = $request->input('user_id');
+        Log::info('User id is : ', $request->all());
 
-        // Get the uploaded files
-        $files = $request->file('attachement');
-        if ($files) {
-            // Loop through each file
-            foreach ($files as $file) {
-                // Store the file in the storage folder (local disk or cloud storage)
-                // The 'public' disk stores files in the 'storage/app/public' folder
-                $path = $file->store('uploads', 'public'); // Store the file
-    
-                // Save the file path in the database
-                User_Detail::create([
-                    'id' => $userId,   // Associate with the user
-                    'attachment' => $path,        // Store the file path
-                ]);
+        // $user_detail = User_Detail::find($userId);
+
+        // Find the user
+        $user = User_Detail::findOrFail($userId);
+
+        $validation = [
+            'attachement' => 'required|array',
+            'attachement.*' => 'nullable|image|file|mimes:jpg,png,pdf|max:2048',
+        ];
+
+        // Validate the request data
+        $validatedData = $request->validate($validation);
+
+        // Initialize an empty array to store image paths
+        $imageNames = [];
+
+        foreach ($validatedData['attachement'] as $image) {
+
+
+            // Loop through each file uploaded for 'attachement' (which is an array of files for each student)
+            // foreach ($image['attachement'] as $image) {
+            // Check if the $image is an instance of UploadedFile (to ensure it's a valid file)
+            if ($image instanceof \Illuminate\Http\UploadedFile) {
+                // Store the image in the 'images' folder (within public storage)
+                $imagePath = $image->store('images', 'public');  // Store image and get path
+
+                // Add the image path/name to the array
+                $imageNames[] = $imagePath;  // You  
             }
-    
-            return response()->json([
-                'success' => true,
-                'message' => 'Files uploaded successfully.'
-            ]);
-            return response()->json([
-                'success' => false,
-                'message' => 'No files uploaded.'
-            ]);
+            // }
+
+
+            // Store the serialized array of images in the database if there are any images
+            if (!empty($imageNames)) {
+                // Unserialize the current image data in the database
+                $existingImages = unserialize($user->attachment);
+
+                // Add the new image path to the existing images array
+                // $existingImages[] = $imageNames;
+
+                // $existingImages = array_merge($existingImages, $imageNames);
+                // array_push($existingImages, $imageNames);
+                $updatedImages = array_unique(array_merge($existingImages, $imageNames));
+
+                $user->attachment = serialize($updatedImages);  // Serialize the array of images' paths
+            }
+            // Save other fields as necessary
+            $user->save();
         }
-    
+
         $studentIndex = $request->all();
-        Log::info("Student Index is : ", $studentIndex);
-        return response()->json(['message' => 'files selected for upload.'], 200);
+        // Log::info("Student Index is : ", $studentIndex);
+        return response()->json(['message' => 'file uploaded successfully'], 200);
         // return "Upload new Images";
     }
 }
