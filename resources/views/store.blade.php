@@ -435,6 +435,8 @@
         }
 
         // Handle changes for start date and end date.
+
+        let previousEndDate = {}; // Store previous end dates for each row
         document.getElementById('myTable1').addEventListener('change', function(event) {
             if (event.target && event.target.name.includes('start_date')) {
                 const startDate = event.target;
@@ -448,10 +450,18 @@
                 const startDateValue = new Date(startDate.value);
                 const endDateValue = new Date(endDate.value);
 
+                const rowIndex = endDate.closest('tr').rowIndex; // Get the row index
+                if (!previousEndDate[rowIndex]) {
+                    previousEndDate[rowIndex] = endDate.value; // Store the first time the end date is set
+                }
                 if (startDateValue > endDateValue) {
                     alert('End date cannot be before start date.');
+                    endDate.value = previousEndDate[rowIndex]; // Revert to the previous end date value
+
                 } else {
-                    startDate.setAttribute('max', endDate.value); // Set max start date to end date.
+                    // If the end date is valid, update the stored previous end date
+                    previousEndDate[rowIndex] = endDate.value; // Update the stored value
+                    startDate.setAttribute('max', endDate.value); // Set max start date to end date
                 }
             }
         });

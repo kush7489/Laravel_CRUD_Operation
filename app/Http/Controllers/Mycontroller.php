@@ -52,12 +52,12 @@ class Mycontroller extends Controller
 
 
         ];
-        // try {
-        //     $validatedData = $request->validate($rules);
-        // } catch (\Illuminate\Validation\ValidationException $e) {
-        //     Log::error('Validation Errors:', $e->validator->errors()->toArray());
-        //     return redirect()->back()->withErrors($e->validator)->withInput();
-        // }
+        try {
+            $validatedData = $request->validate($rules);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            Log::error('Validation Errors:', $e->validator->errors()->toArray());
+            return redirect()->back()->withErrors($e->validator)->withInput();
+        }
 
 
         // Validate the request data
