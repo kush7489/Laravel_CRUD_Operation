@@ -222,7 +222,7 @@ class Mycontroller extends Controller
         }
 
         Log::info('User id validated data : ', $validatedData);
-        // Initialize an empty array to store image paths
+        // Initialize an empty array to store image paths name
         $imageNames = [];
 
         foreach ($validatedData['attachement'] as $image) {
