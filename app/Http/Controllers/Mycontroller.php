@@ -93,14 +93,6 @@ class Mycontroller extends Controller
                 $userDetail->attachment = serialize($imageNames);  // Serialize the array of images' paths
             }
 
-            // Handle file upload
-            // if ($request->hasFile('students.*.attachement')) {
-            //     $file = $student['attachement'];
-            //     $filename = time() . '_' . $file->getClientOriginalName();
-            //     $file->move(public_path('uploads'), $filename);
-            //     $userDetail->attachment = $filename;
-            // }
-
             $userDetail->department = $student['department'];
             $userDetail->course = $student['Course'];
             $userDetail->rollno = $student['rollno'];
@@ -140,70 +132,14 @@ class Mycontroller extends Controller
         // dd($request->all());
         // dd($changedData);
         Log::info('For Update data received', $request->all());
-        // $rules = [
-        //     'students.*.name' => 'required|nullable|string|max:255',
-        //     'students.*.start_date' => 'required|nullable|date',
-        //     'students.*.end_date' => 'required|nullable|date|after_or_equal:students.*.start_date',
-        //     /*
-        //         [{"name":"Eight","start_date":"2024-12-18","end_date":"2024-12-25","department":"Civil","Course":"MCA","rollno":"2323","email":"kushlen@gmail.com","contactno":"43433","enrollmentno":"4334","branch":"Computer","category":"OBC","batch":"4343","address":"fsdf","collage_name":"fsd","father_name":"fsdf","mother_name":"fsd","perma_address":"fds","attachement":{"Illuminate\\Http\\UploadedFile":"C:\\xampp\\tmp\\php9CCD.tmp"}}]
-        //         */
-        //     'students.*.attachement' => 'nullable|file|mimes:jpg,png,pdf|max:2048',
-        //     'students.*.department' => 'required|nullable|string',
-        //     'students.*.Course' => 'required|nullable|string',
-        //     'students.*.rollno' => 'required|nullable|string|max:50',
-        //     'students.*.email' => 'required|nullable|email|max:255',
-        //     'students.*.contactno' => 'required|nullable|string|max:15',
-        //     'students.*.enrollmentno' => 'required|nullable|string|max:50',
-        //     'students.*.branch' => 'required|nullable|string',
-        //     'students.*.category' => 'required|nullable|string',
-        //     'students.*.batch' => 'required|nullable|string|max:50',
-        //     'students.*.address' => 'required|nullable|string|max:255',
-        //     'students.*.collage_name' => 'required|nullable|string|max:255',
-        //     'students.*.father_name' => 'required|nullable|string|max:255',
-        //     'students.*.mother_name' => 'required|nullable|string|max:255',
-        //     'students.*.perma_address' => 'required|nullable|string|max:255',
 
-        //     // Add other validation rules as needed
-        // ];
-
-        // try {
-        //     $validatedData = $request->validate($rules);
-        // } catch (\Illuminate\Validation\ValidationException $e) {
-        //     Log::error('Validation Errors:', $e->validator->errors()->toArray());
-        //     return redirect()->back()->withErrors($e->validator)->withInput();
-        // }
-        // // Validate the request data
-        // $validatedData = $request->validate($rules);
-        // Log::info('Validated Data two:', $validatedData);
 
         // Process each student's data
-        foreach ($changedData as $index => $changes) {            
+        foreach ($changedData as $index => $changes) {
             // Each $changes is an associative array with the field names and their updated values
             foreach ($changes as $field => $value) {
                 // Process the specific changes                
-                $user = User_Detail::find($index); // Find the user by index (or primary key)
-                // dd($user->all());
-
-                // if ($request->hasFile('attachement')) {
-                //     if ($user->attachment) {
-                //         $oldfilepath = public_path('uploads/' . $user->attachment);
-                //         // Log::info('old file path:', $oldfilepath);
-                //         if (file_exists($oldfilepath)) {
-                //             unlink($oldfilepath);
-                //         }
-                //     }
-                //     $file = $request->file('attachement');
-                //     if ($file->isValid()) {
-                //         $fake_browser_path = $file->getClientOriginalName();
-                //         $length_of_attachement = strlen($fake_browser_path);
-                //         $slice_attachement_path = substr($fake_browser_path, 13, $length_of_attachement);
-                //         $filename = time() . '_' . $slice_attachement_path;
-                //         $file->move(public_path('uploads'), $filename);
-                //         $user->attachment = $filename;
-                //     } else {
-                //         Log::error('Uploaded file is not valid.');
-                //     }
-                // }
+                $user = User_Detail::find($index); // Find the user by index (or primary key)                 
 
                 $user->$field = $value; // Update the corresponding field
                 $user->save();
@@ -270,12 +206,22 @@ class Mycontroller extends Controller
 
         $validation = [
             'attachement' => 'required|array',
-            'attachement.*' => 'nullable|image|file|mimes:jpg,png,pdf|max:2048',
+            // 'attachement.*' => 'nullable|image|file|mimes:jpg,png,pdf|max:2048',
+            // 'attachement.*.image' => 'nullable|image',
+            'attachement.*' => 'mimes:jpeg,png,jpg,gif,svg,pdf,docx|max:2048',
         ];
 
         // Validate the request data
-        $validatedData = $request->validate($validation);
+        // $validatedData = $request->validate($validation);
 
+        try {
+            $validatedData = $request->validate($validation);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            Log::error('Validation Errors:', $e->validator->errors()->toArray());
+            return redirect()->back()->withErrors($e->validator)->withInput();
+        }
+
+        Log::info('User id validated data : ', $validatedData);
         // Initialize an empty array to store image paths
         $imageNames = [];
 

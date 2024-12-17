@@ -429,6 +429,18 @@
                 // Retrieve the user ID from the hidden input in the same row
                 var userId = $(this).closest('td').find('.user-id').val();
 
+                var files = inputFile.files;
+                var validTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/gif', 'image/svg+xml',
+                    'application/pdf', 'application/msword'
+                ];
+
+                for (var i = 0; i < files.length; i++) {
+                    if (validTypes.indexOf(files[i].type) === -1) {
+                        alert('Invalid file type. Only images and documents are allowed.');
+                        return;
+                    }
+                }
+
                 // If no files are selected, show an alert
                 if (inputFile.files.length === 0) {
                     alert('Please select a file to upload.');
@@ -464,7 +476,7 @@
                     success: function(response) {
                         alert('Files uploaded successfully');
                         // console.log(response); // Optionally, log the response for debugging
-                        window.location.reload();  // Reloads the current page
+                        window.location.reload(); // Reloads the current page
                     },
                     error: function(xhr, status, error) {
                         alert('There was an error uploading the file.');
