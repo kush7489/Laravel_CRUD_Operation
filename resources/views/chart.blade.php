@@ -107,9 +107,25 @@
                 labels: @json($branchCounts->pluck('branch')), // Branch names
                 datasets: [{
                     label: 'Branch Count',
-                    data: @json($branchCounts->pluck('total')), // Branch count
-                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                    borderColor: 'rgba(75, 192, 192, 1)',
+                    data: @json($branchCounts->pluck('total')), // Branch count                    
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 1)', // Color for the first segment
+                        'rgba(54, 162, 235, 1)', // Color for the second segment
+                        'rgba(255, 206, 86, 1)', // Color for the third segment
+                        'rgba(75, 192, 192, 1)', // Color for the fourth segment
+                        'rgba(153, 102, 255, 1)', // Color for the fifth segment
+                        'rgba(255, 159, 64, 1)' // Color for the sixth segment
+                        // Add more colors as needed
+                    ],
+                    borderColor: [
+                        'rgba(255, 99, 132, 1)', // Border color for the first segment
+                        'rgba(54, 162, 235, 1)', // Border color for the second segment
+                        'rgba(255, 206, 86, 1)', // Border color for the third segment
+                        'rgba(75, 192, 192, 1)', // Border color for the fourth segment
+                        'rgba(153, 102, 255, 1)', // Border color for the fifth segment
+                        'rgba(255, 159, 64, 1)' // Border color for the sixth segment
+                        // Add more borders as needed
+                    ],
                     borderWidth: 1
                 }]
             },
@@ -122,16 +138,35 @@
             }
         });
 
+
         var ctx = document.getElementById('branchChart1').getContext('2d');
         var branchChart = new Chart(ctx, {
-            type: 'bar',
+            type: 'pie',
             data: {
                 labels: @json($courseCounts->pluck('course')), // Branch names
                 datasets: [{
                     label: 'Course Count',
                     data: @json($courseCounts->pluck('total')), // Branch count
-                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                    borderColor: 'rgba(75, 192, 192, 1)',
+                    // backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    // borderColor: 'rgba(75, 192, 192, 1)',
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 1)', // Color for the first segment
+                        'rgba(54, 162, 235, 1)', // Color for the second segment
+                        'rgba(255, 206, 86, 1)', // Color for the third segment
+                        'rgba(75, 192, 192, 1)', // Color for the fourth segment
+                        'rgba(153, 102, 255, 1)', // Color for the fifth segment
+                        'rgba(255, 159, 64, 1)' // Color for the sixth segment
+                        // Add more colors as needed
+                    ],
+                    borderColor: [
+                        'rgba(255, 99, 132, 1)', // Border color for the first segment
+                        'rgba(54, 162, 235, 1)', // Border color for the second segment
+                        'rgba(255, 206, 86, 1)', // Border color for the third segment
+                        'rgba(75, 192, 192, 1)', // Border color for the fourth segment
+                        'rgba(153, 102, 255, 1)', // Border color for the fifth segment
+                        'rgba(255, 159, 64, 1)' // Border color for the sixth segment
+                        // Add more borders as needed
+                    ],
                     borderWidth: 1
                 }]
             },
@@ -146,14 +181,32 @@
 
         var ctx = document.getElementById('branchChart2').getContext('2d');
         var branchChart = new Chart(ctx, {
-            type: 'bar',
+            type: 'doughnut',
             data: {
                 labels: @json($categoryCounts->pluck('category')), // Branch names
                 datasets: [{
                     label: 'Category Count',
                     data: @json($categoryCounts->pluck('total')), // Branch count
-                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                    borderColor: 'rgba(75, 192, 192, 1)',
+                    // backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    // borderColor: 'rgba(75, 192, 192, 1)',
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 1)', // Color for the first segment
+                        'rgba(54, 162, 235, 1)', // Color for the second segment
+                        'rgba(332, 206, 86, 1)', // Color for the third segment
+                        'rgba(75, 192, 192, 1)', // Color for the fourth segment
+                        'rgba(153, 102, 255, 1)', // Color for the fifth segment
+
+                        // Add more colors as needed
+                    ],
+                    borderColor: [
+                        'rgba(255, 99, 132, 1)', // Border color for the first segment
+                        'rgba(54, 162, 235, 1)', // Border color for the second segment
+                        'rgba(332, 206, 86, 1)', // Border color for the third segment
+                        'rgba(75, 192, 192, 1)', // Border color for the fourth segment
+                        'rgba(153, 102, 255, 1)', // Border color for the fifth segment
+
+                        // Add more borders as needed
+                    ],
                     borderWidth: 1
                 }]
             },
@@ -168,15 +221,34 @@
 
         var ctx = document.getElementById('branchChart3').getContext('2d');
         var branchChart = new Chart(ctx, {
-            type: 'bar',
+            type: 'line',
             data: {
-                labels: @json($departmentCounts->pluck('department')),  
+                labels: @json($departmentCounts->pluck('department')),
                 datasets: [{
                     label: 'Department Count',
-                    data: @json($departmentCounts->pluck('total')), 
-                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                    borderColor: 'rgba(75, 192, 192, 1)',
-                    borderWidth: 1
+                    data: @json($departmentCounts->pluck('total')),
+                    // backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    // borderColor: 'rgba(75, 192, 192, 1)',
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 1)', // Color for the first segment
+                        'rgba(54, 162, 235, 1)', // Color for the second segment
+                        'rgba(332, 206, 86, 1)', // Color for the third segment
+                        'rgba(75, 192, 192, 1)', // Color for the fourth segment
+                        'rgba(153, 102, 255, 1)', // Color for the fifth segment
+
+                        // Add more colors as needed
+                    ],
+                    borderColor: [
+                        'rgba(255, 99, 132, 1)', // Border color for the first segment
+                        'rgba(54, 162, 235, 1)', // Border color for the second segment
+                        'rgba(332, 206, 86, 1)', // Border color for the third segment
+                        'rgba(75, 192, 192, 1)', // Border color for the fourth segment
+                        'rgba(153, 102, 255, 1)', // Border color for the fifth segment
+
+                        // Add more borders as needed
+                    ],
+                    borderWidth: 3
+                    // fill: true
                 }]
             },
             options: {
@@ -186,6 +258,9 @@
                     }
                 }
             }
+
+
+
         });
     </script>
 </body>

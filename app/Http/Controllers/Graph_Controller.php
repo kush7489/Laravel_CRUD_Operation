@@ -29,7 +29,7 @@ class Graph_Controller extends Controller
             ->select('department', DB::raw('count(*) as total'))
             ->groupBy('department')
             ->get();
-        dd($departmentCounts);
+        // dd($departmentCounts);
         return view('chart', compact('branchCounts', 'categoryCounts', 'courseCounts','departmentCounts'));
     }
 }
