@@ -264,4 +264,7 @@ class Mycontroller extends Controller
         return response()->json(['message' => 'file uploaded successfully'], 200);
         // return "Upload new Images";
     }
+
+
+     
 }

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Graph_Controller;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Mycontroller;
 
@@ -16,3 +17,7 @@ Route::post('/upload_new_image', [Mycontroller::class, 'upload_new_image'])->nam
 Route::get('/delete_user/{id}', [Mycontroller::class, 'delete_user'])->name('delete_user');
 Route::get('/show_data', [Mycontroller::class, 'show_data'])->name('show_data');
 Route::get('/testing', [Mycontroller::class, 'testing'])->name('testing');
+
+
+// showing_chart
+Route::get('/show_chart',[Graph_Controller::class,'show_chart'])->name('show_chart');

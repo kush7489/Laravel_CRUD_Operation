@@ -76,7 +76,9 @@
         <button class="add-btn" id="duplicateRowBtn" onclick="showElement()">Add +</button>
         <a href="{{ route('edit_page') }}"><button class="add-btn" id="">Edit</button></a>
     </div>
-
+    <div class="header">
+        <a href="{{ route('show_chart') }}"><button class="add-btn" id="">Show Chart</button></a>
+    </div>
     <form action="{{ route('send') }}" method="POST" enctype="multipart/form-data">
         @csrf
         @method('POST')
