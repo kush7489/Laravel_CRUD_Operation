@@ -30,6 +30,7 @@ class Graph_Controller extends Controller
             ->groupBy('department')
             ->get();
         // dd($departmentCounts);
-        return view('chart', compact('branchCounts', 'categoryCounts', 'courseCounts','departmentCounts'));
+        $total_user = User_Detail::count();
+        return view('chart', compact('branchCounts', 'categoryCounts', 'courseCounts','departmentCounts','total_user'));
     }
 }

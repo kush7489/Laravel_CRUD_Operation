@@ -62,6 +62,11 @@
     </center>
     <div class="header">
         <a href="{{ route('index') }}"><button class="add-btn" id="">Back</button></a>
+        
+    </div>
+    <div class="header">
+         
+        <button class="add-btn" id="duplicateRowBtn">Total Users : {{$total_user}} </button>
     </div>
     <div class="chart-container">
 
